@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "Karpo Interview Assistant",
+  "version": "0.4.5",
+  "description": "Real-time AI co-pilot for Karpo user interviews on Google Meet — translation, smart follow-ups, completeness tracking. v0.4.5 — fix CSP: external mic-grant.js so click handler binds.",
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "tabs",
+    "scripting",
+    "tabCapture",
+    "offscreen",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://meet.google.com/*",
+    "http://localhost:8000/*",
+    "http://127.0.0.1:8000/*",
+    "https://*.e2b.dev/*"
+  ],
+  "action": {
+    "default_title": "Open Karpo Interview Assistant",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://meet.google.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
+}

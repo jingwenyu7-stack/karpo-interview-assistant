@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Karpo — Grant Microphone Access</title>
+<style>
+  :root { color-scheme: dark; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #18191c;
+    color: #e8eaed;
+    margin: 0;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+  }
+  .card {
+    background: #25272b;
+    border: 1px solid #353841;
+    border-radius: 14px;
+    padding: 32px 40px;
+    max-width: 480px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .logo {
+    font-size: 56px;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-size: 22px;
+    margin: 0 0 12px;
+    color: #c4b5fd;
+  }
+  p {
+    line-height: 1.55;
+    color: #aab0b8;
+    margin: 8px 0;
+  }
+  .status {
+    margin-top: 22px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 14px;
+  }
+  .status.pending { background: #2a2c30; color: #c1c6cc; }
+  .status.success { background: rgba(52,168,83,0.12); color: #81c995; }
+  .status.error { background: rgba(234,67,53,0.12); color: #f28b82; }
+  .btn {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 32px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  .btn:hover { filter: brightness(1.1); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .small { font-size: 12px; color: #6b7280; margin-top: 18px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">🎙️</div>
+  <h1>Grant microphone access to Karpo</h1>
+  <p>Karpo needs your microphone to transcribe what <b>you (the interviewer)</b> say. Click the button below — Chrome will show its permission prompt right above this page.</p>
+
+  <button class="btn" id="grant-btn">Click here to allow microphone</button>
+
+  <div class="status pending" id="status">Click the button above. Chrome will show its permission prompt at the top of this window.</div>
+
+  <p class="small">This window closes automatically once permission is granted.</p>
+</div>
+
+<script src="mic-grant.js"></script>
+</body>
+</html>

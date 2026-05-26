@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karpo Interview Assistant</title>
+<link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+
+<!-- Header -->
+<header class="app-header">
+  <div class="header-title">
+    <div class="logo">🎯</div>
+    <div class="title-text">
+      <h1>Karpo Assistant</h1>
+      <span class="subtitle" id="connection-status">Disconnected</span>
+    </div>
+  </div>
+  <div class="header-actions">
+    <span class="session-timer" id="timer">00:00</span>
+    <button class="icon-btn" id="settings-btn" title="Settings">⚙</button>
+  </div>
+</header>
+
+<!-- Setup view (shown before session starts) -->
+<div class="view view-setup" id="view-setup">
+  <div class="setup-card">
+    <h2>Start a new interview session</h2>
+    <p class="muted">Enter details and create a session to begin.</p>
+
+    <label class="field">
+      <span>Backend URL</span>
+      <input type="text" id="backend-url" placeholder="http://localhost:8000">
+      <span class="field-hint" id="health-status">Click "Check" to verify backend</span>
+      <button class="link-btn" id="check-health">Check connection</button>
+    </label>
+
+    <label class="field">
+      <span>Interviewee name</span>
+      <input type="text" id="interviewee-name" placeholder="e.g. Jessica">
+    </label>
+
+    <label class="field">
+      <span>Your name (interviewer)</span>
+      <input type="text" id="interviewer-name" placeholder="e.g. Wenjing">
+    </label>
+
+    <label class="field">
+      <span>Is this person an existing Karpo user?</span>
+      <select id="is-karpo-user">
+        <option value="unknown">Unknown / will confirm during interview</option>
+        <option value="false">No</option>
+        <option value="true">Yes</option>
+      </select>
+    </label>
+
+    <button class="primary-btn" id="start-session-btn">Start Session</button>
+  </div>
+</div>
+
+<!-- Main view (during session) -->
+<div class="view view-session hidden" id="view-session">
+  <!-- Tab nav -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="live">Live</button>
+    <button class="tab" data-tab="coverage">
+      Coverage <span class="badge" id="missing-count">49</span>
+    </button>
+    <button class="tab" data-tab="profile">Profile</button>
+    <button class="tab" data-tab="transcript">Transcript</button>
+  </nav>
+
+  <!-- Tab: Live -->
+  <section class="tab-content" id="tab-live">
+    <div id="live-content">
+      <div class="empty-state">
+        <div class="empty-icon">🎙️</div>
+        <p>Use the input below to submit what the interviewee just said.<br/>
+        Smart follow-ups will appear here.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tab: Coverage -->
+  <section class="tab-content hidden" id="tab-coverage">
+    <div id="pacing-banner-container"></div>
+    <div id="coverage-content"></div>
+  </section>
+
+  <!-- Tab: Profile -->
+  <section class="tab-content hidden" id="tab-profile">
+    <div id="profile-content">
+      <div class="empty-state">
+        <div class="empty-icon">👤</div>
+        <p>Profile will be extracted from the conversation.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tab: Transcript -->
+  <section class="tab-content hidden" id="tab-transcript">
+    <div id="transcript-content">
+      <div class="empty-state">
+        <div class="empty-icon">📝</div>
+        <p>Full transcript will appear here.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Audio capture control bar -->
+  <div class="audio-bar" id="audio-bar">
+    <div class="audio-status">
+      <span class="audio-dot dot-mic" id="dot-mic" title="Microphone (interviewer)">🎤</span>
+      <span class="audio-label" id="audio-label-mic">Mic: off</span>
+      <span class="audio-dot dot-tab" id="dot-tab" title="Tab audio (interviewee)">🔊</span>
+      <span class="audio-label" id="audio-label-tab">Tab: off</span>
+    </div>
+    <button class="audio-btn primary-btn" id="audio-toggle-btn">🎙️ Start listening</button>
+  </div>
+
+  <!-- Live interim transcript -->
+  <div class="live-transcript hidden" id="live-transcript">
+    <div class="live-row">
+      <span class="live-role">Q</span>
+      <span class="live-text" id="live-interviewer">…</span>
+    </div>
+    <div class="live-row">
+      <span class="live-role live-role-a">A</span>
+      <span class="live-text" id="live-interviewee">…</span>
+    </div>
+  </div>
+
+  <!-- Bottom input bar (manual fallback) -->
+  <div class="input-bar">
+    <div class="input-mode-toggle">
+      <span class="mode-label">Quick entry (manual fallback)</span>
+      <span class="cost-pill" id="cost-pill">$0.000</span>
+    </div>
+
+    <textarea
+      id="interviewer-question"
+      placeholder="What you (interviewer) just asked..."
+      rows="2"></textarea>
+
+    <textarea
+      id="interviewee-response"
+      placeholder="What they (interviewee) replied — paste or type..."
+      rows="3"></textarea>
+
+    <div class="input-actions">
+      <button class="secondary-btn" id="end-session-btn">End session</button>
+      <button class="primary-btn" id="submit-turn-btn">
+        <span class="btn-label">Submit turn</span>
+        <span class="btn-spinner hidden">⏳</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Completion view -->
+<div class="view view-complete hidden" id="view-complete">
+  <div class="complete-card">
+    <div class="complete-icon">✓</div>
+    <h2>Session complete</h2>
+    <p class="muted" id="complete-stats"></p>
+
+    <div class="report-preview" id="report-preview">
+      Generating persona report...
+    </div>
+
+    <div class="complete-actions">
+      <button class="secondary-btn" id="copy-report-btn">Copy report</button>
+      <button class="primary-btn" id="new-session-btn">New session</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="sidepanel.js"></script>
+</body>
+</html>
